@@ -1944,16 +1944,21 @@ int main(int argc, char* argv[])
 
         //strcpy (pSpi[i]->m_chBrokerID, "6A89B428");	// 期货周边测试系统(v8)
         //strcpy (pSpi[i]->m_chBrokerID, "6A89B428");	// 期货周边测试系统(v8)
-	strcpy (pSpi[i]->m_chBrokerID, "31000853");
+	//strcpy (pSpi[i]->m_chBrokerID, "31000853");
+        strcpy (pSpi[i]->m_chBrokerID, "3748FD77");	// Nanhua Mechantile Broker ID 
       //  _snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "80006", i+1);
 	printf("userid is %s\n", pSpi[i]->m_chBrokerID);
 #ifdef WIN32
-      _snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "80002");
+      //_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "80002");
+	_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "8023901");
 #else
-	 snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID), "80002");
+	//snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID), "80002");
+        snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID), "8023901");
 #endif
-        strcpy (pSpi[i]->m_chPassword, "123456");
-        strcpy (pSpi[i]->m_chContract, "IF1203");
+        //strcpy (pSpi[i]->m_chPassword, "123456");
+        strcpy (pSpi[i]->m_chPassword, "2525");
+        //strcpy (pSpi[i]->m_chContract, "IF1203");
+        strcpy (pSpi[i]->m_chContract, "al1412");
 
         //strcpy (pSpi[i]->m_chBrokerID, "1C784211");	// 兴业期货有限公司
         //strcpy (pSpi[i]->m_chUserID, "11803873");
@@ -2005,7 +2010,8 @@ int main(int argc, char* argv[])
         //pUserApi[i]->RegisterFront("http://210.5.154.195:18993/jazzmonk.vicp.net:80");	// kstar v6 internet proxy
         //pUserApi[i]->RegisterFront("http://10.253.46.165:18993/10.253.44.234:8080");	// kstar v8 local proxy
         //pUserApi[i]->RegisterFront("tcp://10.253.117.107:13163");	// kstar v8 local proxy
-  	 pUserApi[i]->RegisterFront("tcp://10.253.117.107:13153");	// kstar v6 local proxy
+  	//pUserApi[i]->RegisterFront("tcp://10.253.117.107:13153");	// kstar v6 local proxy
+	pUserApi[i]->RegisterFront("tcp://124.160.44.166:17159");		// Nanhua Mechantile API 
         //pUserApi[i]->RegisterFront("tcp://10.253.44.42:17993");	// kstar v8 local
         //pUserApi[i]->RegisterFront("tcp://127.0.0.1:17993");		// kstar v6 localhost
 
