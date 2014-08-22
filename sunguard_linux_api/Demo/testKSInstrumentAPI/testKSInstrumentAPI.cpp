@@ -147,6 +147,14 @@ public:
         strcpy(Investor.InvestorID, m_chUserID);
 
         m_pUserApi->ReqQryInvestor(&Investor, m_nRequestID++ );
+
+        // get all contracts
+        // qryInstrument request.
+	CThostFtdcQryInstrumentField QryInstrument;
+        memset(&QryInstrument, 0, sizeof(QryInstrument));
+        // exchange id
+        // strcpy(QryInstrument.ExchangeID, "SHFE");
+        m_pUserApi->ReqQryInstrument(&QryInstrument, m_nRequestID++ );
     }
 
     // investor response
@@ -1920,103 +1928,30 @@ int main(int argc, char* argv[])
         pSpi[i] = new CSimpleHandler(pUserApi[i]);
 
         // Create a manual reset event with no signal
-        //pSpi[i]->m_hEvent = CreateEvent(NULL, true, false, NULL);
         pSpi[i]->m_hEvent = event_create(true, false);
 
         CCosHandler CosSpiTest;			//产生一个条件单响应的实例
         // set spi's broker, user, passwd
-        //strcpy (pSpi[i]->m_chBrokerID, "6A89B428");	// 期货周边测试系统(v6)
-        //_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "8000%d", i+1);
-        //strcpy (pSpi[i]->m_chPassword, "123456");
-        //_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "36000002");
-        //strcpy (pSpi[i]->m_chPassword, "");
-        //strcpy (pSpi[i]->m_chContract, "IF1201");
-
-        //strcpy (pSpi[i]->m_chBrokerID, "6A89B428");	// 期货周边测试系统(v8)
-        //strcpy (pSpi[i]->m_chBrokerID, "6A89B428");	// 期货周边测试系统(v8)
-	//strcpy (pSpi[i]->m_chBrokerID, "31000853");
         strcpy (pSpi[i]->m_chBrokerID, "3748FD77");	// Nanhua Mechantile Broker ID 
-      //  _snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "80006", i+1);
 	printf("userid is %s\n", pSpi[i]->m_chBrokerID);
+
 #ifdef WIN32
-      //_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "80002");
 	_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "8023901");
 #else
-	//snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID), "80002");
         snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID), "8023901");
 #endif
-        //strcpy (pSpi[i]->m_chPassword, "123456");
         strcpy (pSpi[i]->m_chPassword, "2525");
-        //strcpy (pSpi[i]->m_chContract, "IF1203");
         strcpy (pSpi[i]->m_chContract, "al1412");
-
-        //strcpy (pSpi[i]->m_chBrokerID, "1C784211");	// 兴业期货有限公司
-        //strcpy (pSpi[i]->m_chUserID, "11803873");
-        //strcpy (pSpi[i]->m_chPassword, "000000");
-        //strcpy (pSpi[i]->m_chUserID, "98180895");
-        //strcpy (pSpi[i]->m_chPassword, "888888");
-        //strcpy (pSpi[i]->m_chContract, "rb1205");
-
-        //strcpy (pSpi[i]->m_chBrokerID, "31000853");	// 上海复旦金仕达计算机(v8)
-        //_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "3600000%d", i+1);
-        //strcpy (pSpi[i]->m_chPassword, "123456");
-        //strcpy (pSpi[i]->m_chUserID, "5100001");
-        //strcpy (pSpi[i]->m_chPassword, "111111");
-        //strcpy (pSpi[i]->m_chContract, "au1001");
 
         // register an event handler instance
 
-
-	//条件单下单
-	 CKSConditionalOrderInitInsert ConditionOrder;
-	 memset (&ConditionOrder, 0, sizeof (ConditionOrder));
-	 FormatConditionalInsertData (&ConditionOrder);
-
-	  //查询条件单实例 
-	 CKSConditionalOrderQuery Querycondition;
-	 memset (&Querycondition, 0, sizeof (CKSConditionalOrderQuery));
-	 FormatConditionalQueryData (&Querycondition);
-        //.....
-	
         pUserApi[i]->RegisterSpi(pSpi[i]);
 
-        // subscribe private topic
-        //pUserApi[i]->SubscribePrivateTopic(THOST_TERT_RESTART);
-        //pUserApi[i]->SubscribePrivateTopic(THOST_TERT_RESUME);
-        pUserApi[i]->SubscribePrivateTopic(THOST_TERT_QUICK);
-
-        // subscribe public topic
-        //pUserApi[i]->SubscribePublicTopic(THOST_TERT_RESTART);
-        //pUserApi[i]->SubscribePublicTopic(THOST_TERT_RESUME);
-        pUserApi[i]->SubscribePublicTopic(THOST_TERT_QUICK);
-
         // register the kingstar front address and port
-        //pUserApi[i]->RegisterFront("http://116.228.51.115:28993/jazzmonk.vicp.net:80");	// xingye sim v8 proxy
-        //pUserApi[i]->RegisterFront("http://116.228.51.115:13159/192.168.1.101:8080");	// xingye sim v6 proxy
-        //pUserApi[i]->RegisterFront("http://10.253.46.23:16993/10.253.44.234:8080");		// kstar v6 local proxy
-        //pUserApi[i]->RegisterFront("http://10.253.46.23:18993/10.253.44.234:8080");		// kstar v6 local proxy
-        //pUserApi[i]->RegisterFront("tcp://10.253.44.30:17993");		// kstar v6 system test（1026，1226）
-        //pUserApi[i]->RegisterFront("tcp://210.5.154.195:18993");		// kstar v6 internet
-        //pUserApi[i]->RegisterFront("http://210.5.154.195:18993/jazzmonk.vicp.net:80");	// kstar v6 internet proxy
-        //pUserApi[i]->RegisterFront("http://10.253.46.165:18993/10.253.44.234:8080");	// kstar v8 local proxy
-        //pUserApi[i]->RegisterFront("tcp://10.253.117.107:13163");	// kstar v8 local proxy
-  	//pUserApi[i]->RegisterFront("tcp://10.253.117.107:13153");	// kstar v6 local proxy
 	pUserApi[i]->RegisterFront("tcp://124.160.44.166:17159");		// Nanhua Mechantile API 
-        //pUserApi[i]->RegisterFront("tcp://10.253.44.42:17993");	// kstar v8 local
-        //pUserApi[i]->RegisterFront("tcp://127.0.0.1:17993");		// kstar v6 localhost
 
         // make the connection between client and CTP server
-	//pUserApi[i]->RegisterNameServer("tcp://10.253.117.107:11000//80008");		// portal register
         pUserApi[i]->Init();
-	
-	pCosAPI = (CKSCosApi *) pUserApi[i]->LoadExtApi(&CosSpiTest,"KSCosApi");	//注册条件单实例
-	if( NULL == pCosAPI )
-	{
-		printf("register conditional order instance failed\n");
-	}
-	event_timedwait((event_handle)pSpi[i]->m_hEvent,3000);
-  	pCosAPI->ReqInitInsertConditionalOrder(&ConditionOrder, pSpi[i]->m_nRequestID++);
-	pCosAPI->ReqQueryConditionalOrder (&Querycondition, pSpi[i]->m_nRequestID++);
     }
 
     printf ("\npress return to release...\n");
@@ -2034,8 +1969,7 @@ int main(int argc, char* argv[])
         pUserApi[i]->ReqUserLogout(&UserLogout, pSpi[i]->m_nRequestID++ );
 
         // waiting for quit event
-        //WaitForSingleObject(pSpi[i]->m_hEvent, 3000/*INFINITE*/);
-	 event_timedwait((event_handle)pSpi[i]->m_hEvent, 3000/*INFINITE*/);  
+	event_timedwait((event_handle)pSpi[i]->m_hEvent, 3000/*INFINITE*/);  
 
         // release the API instance
         pUserApi[i]->Release();
