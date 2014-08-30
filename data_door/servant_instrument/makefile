@@ -7,7 +7,7 @@ LIB= -L ../KSTradeAPI/linux64 \
      -lkstradeapi \
      -lkslkc64r
 
-TARGET=main_64
+TARGET=servant_instrument
 
 ifeq ($(vtype),32r)
     CFLAGS+=-m32
@@ -22,13 +22,13 @@ endif
 all: ${TARGET}
 	cp -f ${TARGET} ../run/
 
-${TARGET}: event.o main.o
+${TARGET}: event.o servant_instrument.o
 	${CC} ${CFLAGS} -o $@ $^  ${LIB} 
 
-main.o: main.cpp
+servant_instrument.o: servant_instrument.cpp
 	${CC} ${CFLAGS} -o $@ -c $^ 
 
 event.o:event.cpp
 	${CC} ${CFLAGS} -o $@ -c $^  
 clean:
-	rm -f *.o main_* 
+	rm -f *.o servant_instrument_* 

@@ -1,7 +1,7 @@
 // testKSInstrumentAPI.cpp : Defines the entry point for the console application.
 //
 
-#include "main.h"
+#include "servant_instrument.h"
 #include "event.h"
 #include "../KSTradeAPI/KSTradeAPI.h"
 #include "../CTP/KSCosApiDataType.h"
@@ -22,7 +22,6 @@ using namespace std;
 #endif
 
 using namespace KingstarAPI;
-
 
 class CSimpleHandler : public CThostFtdcTraderSpi
 {
