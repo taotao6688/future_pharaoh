@@ -7,6 +7,11 @@
 #include "../CTP/KSCosApiDataType.h"
 #include "../CTP/KSCosApiStruct.h"
 #include "../CTP/KSCosApi.h"
+#include "ClientSocket.h"
+#include "SocketException.h"
+#include <iostream>
+#include <string>
+#include <cstdarg>
 
 #include<stdlib.h>
 #include<stdio.h>
@@ -50,6 +55,53 @@ public:
     CSimpleHandler(CThostFtdcTraderApi *pUserApi) : m_pUserApi(pUserApi), m_nRequestID(0) {}
 
     ~CSimpleHandler() {}
+
+    //missing string printf
+    //this is safe and convenient but not exactly efficient
+    std::string format(const char* fmt, ...){
+	  int size = 4096;
+	  char* buffer = 0;
+	  buffer = new char[size];
+	  va_list vl;
+	  va_start(vl, fmt);
+	  int nsize = vsnprintf(buffer, size, fmt, vl);
+	  if(size<=nsize){ //fail delete buffer and try again
+		delete[] buffer;
+		buffer = 0;
+		buffer = new char[nsize+1]; //+1 for /0
+		nsize = vsnprintf(buffer, size, fmt, vl);
+	  }
+	  std::string ret(buffer);
+	  va_end(vl);
+	  delete[] buffer;
+	  return ret;
+    }
+
+    std::string publish(std::string fc_message)
+    {
+	std::string reply = "No Uuid Received"; 
+	try
+	{
+	      ClientSocket client_socket ( "localhost", 9999 );
+
+	      try
+		{
+		  client_socket << fc_message;
+		  client_socket >> reply;
+		}
+	      catch ( SocketException& ) {}
+
+	      std::cout << "Received uuid for the message:\n\"" << reply << "\"\n";;
+
+	}
+	catch ( SocketException& e )
+	{
+	      std::cout << "Exception was caught:" << e.description() << "\n";
+	}
+
+	return reply;
+    }
+
 
     // After making a succeed connection with the CTP server, the client should send the login request to the CTP server.
     virtual void OnFrontConnected()
@@ -265,6 +317,17 @@ public:
                 pInstrument->ProductID,								// 产品代码
                 pInstrument->PriceTick,								// 最小变动价位
                 nRequestID);
+	    std::string mystr = format("%s|%s|%s|%s|%d|%s|%s|%.04f|%d|",
+		"FCMESSAGE_TYPE_INSTRUMENT",
+                pInstrument->ExchangeID,                                                        // 交易所代码
+                pInstrument->InstrumentID,                                                      // 合约代码
+                pInstrument->InstrumentName,                                            // 合约名称
+                pInstrument->VolumeMultiple,                                            // 合约数量乘数
+                pInstrument->ExpireDate,                                                        // 到期日
+                pInstrument->ProductID,                                                         // 产品代码
+                pInstrument->PriceTick,                                                         // 最小变动价位
+                nRequestID);
+	    std::string uuid = publish(mystr);
         }
         printf("\n");
         printf("ErrorCode=[%d], ErrorMsg=[%s]\n", pRspInfo->ErrorID, pRspInfo->ErrorMsg);
