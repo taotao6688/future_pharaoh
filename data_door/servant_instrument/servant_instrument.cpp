@@ -1,14 +1,13 @@
-// testKSInstrumentAPI.cpp : Defines the entry point for the console application.
-//
+// servant_intrument.cpp : Defines the entry point for the console application.
 
 #include "servant_instrument.h"
 #include "event.h"
+#include "ClientSocket.h"
+#include "SocketException.h"
 #include "../KSTradeAPI/KSTradeAPI.h"
 #include "../CTP/KSCosApiDataType.h"
 #include "../CTP/KSCosApiStruct.h"
 #include "../CTP/KSCosApi.h"
-#include "ClientSocket.h"
-#include "SocketException.h"
 #include <iostream>
 #include <string>
 #include <cstdarg>
@@ -86,7 +85,7 @@ public:
 
 	      try
 		{
-		  client_socket << fc_message;
+		  client_socket << fc_message + "\n";
 		  client_socket >> reply;
 		}
 	      catch ( SocketException& ) {}

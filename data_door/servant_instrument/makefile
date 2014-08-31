@@ -22,13 +22,20 @@ endif
 all: ${TARGET}
 	cp -f ${TARGET} ../run/
 
-${TARGET}: event.o servant_instrument.o
+${TARGET}: event.o Socket.o ClientSocket.o servant_instrument.o
 	${CC} ${CFLAGS} -o $@ $^  ${LIB} 
+
+event.o:event.cpp
+	${CC} ${CFLAGS} -o $@ -c $^  
+
+Socket.o: Socket.cpp
+	${CC} ${CFLAGS} -o $@ -c $^  
+
+ClientSocket.o: ClientSocket.cpp
+	${CC} ${CFLAGS} -o $@ -c $^  
 
 servant_instrument.o: servant_instrument.cpp
 	${CC} ${CFLAGS} -o $@ -c $^ 
 
-event.o:event.cpp
-	${CC} ${CFLAGS} -o $@ -c $^  
 clean:
 	rm -f *.o servant_instrument_* 
