@@ -8,13 +8,13 @@ int main ( int argc, char* argv[])
   try
     {
 
-      ClientSocket client_socket ( "localhost", 30000 );
+      ClientSocket client_socket ( "localhost", 9999 );
 
       std::string reply;
 
       try
 	{
-	  client_socket << "Test message.";
+	  client_socket << "Test message.\n";
 	  client_socket >> reply;
 	}
       catch ( SocketException& ) {}
