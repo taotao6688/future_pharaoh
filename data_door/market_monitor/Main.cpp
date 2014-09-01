@@ -34,6 +34,8 @@ using namespace KingstarAPI;
 class CTraderHandler : public CThostFtdcTraderSpi
 {
 public:
+    MarketSubscriber *marketSubscriber;
+
     // participant ID
     TThostFtdcBrokerIDType m_chBrokerID;
 
@@ -55,7 +57,7 @@ public:
 
 public: 
     // constructor£¬which need a valid pointer to a CThostFtdcMduserApi instance 
-    CTraderHandler(CThostFtdcTraderApi *pUserApi) : m_pUserApi(pUserApi), m_nRequestID(0) { }
+    CTraderHandler(CThostFtdcTraderApi *pUserApi, MarketSubscriber *subscriber) : m_pUserApi(pUserApi), marketSubscriber(subscriber), m_nRequestID(0) { }
 
     ~CTraderHandler() {}
 
@@ -340,6 +342,8 @@ public:
         printf("\n");
         printf("ErrorCode=[%d], ErrorMsg=[%s]\n", pRspInfo->ErrorID, pRspInfo->ErrorMsg);
         printf("RequestID=[%d], Chain=[%d]\n", nRequestID, bIsLast);
+
+	marketSubscriber->subscribe(pInstrument->InstrumentID);
 
 	/*
     	CThostFtdcMdApi marketApi = CThostFtdcMdApi::CreateFtdcMdApi();
@@ -2142,6 +2146,7 @@ const int MAX_CONNECTION = 1;
 
 int main(int argc, char* argv[])
 {
+    MarketSubscriber *subscriber = new MarketSubscriber();
     CThostFtdcTraderApi *pUserApi[MAX_CONNECTION] = {0};
     CTraderHandler *pSpi[MAX_CONNECTION] = {0};
 
@@ -2151,9 +2156,10 @@ int main(int argc, char* argv[])
     {
         // create a CThostFtdcTraderApi instance
         pUserApi[i] = CThostFtdcTraderApi::CreateFtdcTraderApi();
+    	subscriber = new MarketSubscriber();
 
         // create an event handler instance
-        pSpi[i] = new CTraderHandler(pUserApi[i]);
+        pSpi[i] = new CTraderHandler(pUserApi[i], subscriber);
 
         // Create a manual reset event with no signal
         pSpi[i]->m_hEvent = event_create(true, false);
@@ -2204,6 +2210,8 @@ int main(int argc, char* argv[])
         // delete pSpi
         delete pSpi[i];
     }
+
+    delete subscriber;
 
     printf ("\npress return to quit...\n");
     getchar();

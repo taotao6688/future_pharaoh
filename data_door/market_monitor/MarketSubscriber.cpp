@@ -79,3 +79,23 @@ void MarketSubscriber::release()
 
 	delete handler;
 }
+
+  void MarketSubscriber::subscribe( char* contract)
+{
+        //ÐÐÇé¶©ÔÄÁÐ±í
+        //char *ppInstrumentID[] = {"IF1203"};
+        char *ppInstrumentID[1024];
+        ppInstrumentID[0] = new char[31];
+        strcpy (ppInstrumentID[0], contract);
+
+        //ÐÐÇé¶©ÔÄ¸öÊý
+        int iInstrumentID = 1;
+
+        //¶©ÔÄ
+        marketApi->SubscribeMarketData(ppInstrumentID, iInstrumentID);
+	printf("Subscribed market data for :%s\n", ppInstrumentID[0]);
+
+        //ÊÍ·ÅÄÚ´æ
+        delete ppInstrumentID[0];
+}
+

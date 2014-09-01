@@ -16,7 +16,7 @@ class MarketSubscriber
   void init();
   void release();
   // subscribe 
-  void subscribe( const std::string );
+  void subscribe(char *);
 
  public:
   char contract[80];

@@ -88,6 +88,7 @@
 		// get trading day
 		printf("获取当前交易日 = %s\n",m_pUserApi->GetTradingDay());
 
+/*
 		// 行情订阅列表
 		//char *ppInstrumentID[] = {"IF1203"};
         char *ppInstrumentID[1024];
@@ -99,6 +100,7 @@
 		m_pUserApi->SubscribeMarketData(ppInstrumentID, iInstrumentID);
         // 释放内存
         delete ppInstrumentID[0];
+*/
 	}
 
 	///RspSubMarketData return
