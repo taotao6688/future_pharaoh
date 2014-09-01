@@ -13,6 +13,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -40,23 +41,26 @@ public:
     TThostFtdcPasswordType m_chPassword;
 
     // contract
-    char m_chContract[80];
+    char m_chContract[1024][80];
 
     // request id
     int m_nRequestID;
+
+    // number of contracts
+    int m_nContracts;
 
     // finish event
     HANDLE m_hEvent;
 
 public: 
     // constructor，which need a valid pointer to a CThostFtdcMduserApi instance 
-    CSampleHandler(CThostFtdcMdApi *pUserApi) : m_pUserApi(pUserApi) {}
+    CSampleHandler(CThostFtdcMdApi *pUserApi, int nContracts) : m_pUserApi(pUserApi), m_nContracts(nContracts) {}
 
     ~CSampleHandler() {}
 
     //missing string printf
     //this is safe and convenient but not exactly efficient
-    std::string format(const char* fmt, ...){
+    static std::string format(const char* fmt, ...){
 	  int size = 4096;
 	  char* buffer = 0;
 	  buffer = new char[size];
@@ -75,7 +79,7 @@ public:
 	  return ret;
     }
 
-    std::string publish(std::string fc_message)
+    static std::string publish(std::string fc_message)
     {
 	std::string reply = "No Uuid Received"; 
 	try
@@ -168,15 +172,21 @@ public:
 
 		// 行情订阅列表
 		//char *ppInstrumentID[] = {"IF1203"};
-        char *ppInstrumentID[1024];
-        ppInstrumentID[0] = new char[31];
-        strcpy (ppInstrumentID[0], m_chContract);
+	        char *ppInstrumentID[1024];
+
+		for(int i=0; i<m_nContracts; i++) {
+			ppInstrumentID[i] = new char[31];
+			strcpy (ppInstrumentID[i], m_chContract[i]);
+		}
 		// 行情订阅个数
-		int iInstrumentID = 1;
-        // 	订阅
+		int iInstrumentID = m_nContracts;
+        	// 	订阅
 		m_pUserApi->SubscribeMarketData(ppInstrumentID, iInstrumentID);
-        // 释放内存
-        delete ppInstrumentID[0];
+        	// 释放内存
+
+		for(int i=0; i<m_nContracts; i++) {
+        		delete ppInstrumentID[i];
+		}
 	}
 
 	///RspSubMarketData return
@@ -330,6 +340,15 @@ int main(int argc, char* argv[])
 {
     CThostFtdcMdApi *pUserApi[MAX_CONNECTION] = {0};
     CSampleHandler *pSpi[MAX_CONNECTION] = {0};
+    std::string instrumentStr = CSampleHandler::publish("FCQUERY_ALL_INSTRUMENTS");
+
+    char contracts[1024][80];
+    int nContracts = 0;
+    stringstream ssin(instrumentStr);
+    while (ssin.good() && nContracts<1024){
+        ssin >> contracts[nContracts];
+        ++nContracts;
+    }
 
     //for (int i=0; i < MAX_CONNECTION; i++ )
     for (int i=0; i < 1; i++ )
@@ -338,7 +357,7 @@ int main(int argc, char* argv[])
         pUserApi[i] = CThostFtdcMdApi::CreateFtdcMdApi();
 
         // create an event handler instance
-        pSpi[i] = new CSampleHandler(pUserApi[i]);
+        pSpi[i] = new CSampleHandler(pUserApi[i], nContracts);
 
         // Create a manual reset event with no signal
         pSpi[i]->m_hEvent = event_create(true, false);
@@ -349,8 +368,8 @@ int main(int argc, char* argv[])
         //_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID), "8000%d", i+1);
         //snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID), "8000%d", i+1);
 #ifdef WIN32
-		//_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "80008");
-		_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "8023901");
+	//_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "80008");
+	_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "8023901");
 #else
         //snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID), "80008");
         snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID), "8023901");
@@ -362,7 +381,9 @@ int main(int argc, char* argv[])
         //_snprintf(pSpi[i]->m_chUserID, sizeof(pSpi[i]->m_chUserID)-1, "36000002");
         //strcpy (pSpi[i]->m_chPassword, "");
         //strcpy (pSpi[i]->m_chContract, "IF1408");
-        strcpy (pSpi[i]->m_chContract, "al1412");
+        //strcpy (pSpi[i]->m_chContract, "al1412");
+	for(int j=0; j<nContracts; j++)
+        	strcpy (pSpi[i]->m_chContract[j], contracts[j]);
 
         //strcpy (pSpi[i]->m_chBrokerID, "1C784211");	// 兴业期货有限公司
         //strcpy (pSpi[i]->m_chUserID, "11803873");

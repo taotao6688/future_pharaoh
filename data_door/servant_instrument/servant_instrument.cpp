@@ -496,6 +496,47 @@ public:
                 pDepthMarketData->AskVolume5,					// 申卖量五
                 pDepthMarketData->AskPrice5						// 申卖价五
                 );
+
+            std::string mystr = format("%s|%s|%s|%.04f|%.04f|%.04f|%.04f|%.04f|%d|%.04f|%.04f|%.04f|%d|%d|%.04f|%.04f|%.04f|%.04f|%.04f|%s|%d|%.04f|%d|%.04f|%d|%.04f|%d|%.04f|%d|%.04f|%d|%.04f|%d|%.04f|%d|%.04f|",
+                "FCMESSAGE_TYPE_MARKET",
+                pDepthMarketData->ExchangeID,					// 交易所代码
+                pDepthMarketData->InstrumentID,					// 合约代码
+                pDepthMarketData->PreClosePrice,				// 昨收盘
+                pDepthMarketData->OpenPrice,					// 今开盘
+                pDepthMarketData->HighestPrice,					// 最高价
+                pDepthMarketData->LowestPrice,					// 最低价
+                pDepthMarketData->LastPrice,					// 最新价
+                pDepthMarketData->Volume,						// 数量
+                pDepthMarketData->Turnover,						// 成交金额
+                pDepthMarketData->BidPrice1,					// 申买价一
+                pDepthMarketData->AskPrice1,					// 申卖价一
+                pDepthMarketData->BidVolume1,					// 申买量一
+                pDepthMarketData->AskVolume1,					// 申卖量一
+                pDepthMarketData->UpperLimitPrice,				// 涨停板价
+                pDepthMarketData->LowerLimitPrice,				// 跌停板价
+                pDepthMarketData->PreSettlementPrice,			// 上次结算价
+                pDepthMarketData->SettlementPrice,				// 本次结算价
+                pDepthMarketData->OpenInterest,					// 持仓量
+                pDepthMarketData->TradingDay,					// 交易日
+                pDepthMarketData->BidVolume2,					// 申买量二
+                pDepthMarketData->BidPrice2,					// 申买价二
+                pDepthMarketData->BidVolume3,					// 申买量三
+                pDepthMarketData->BidPrice3,					// 申买价三
+                pDepthMarketData->BidVolume4,					// 申买量四
+                pDepthMarketData->BidPrice4,					// 申买价四
+                pDepthMarketData->BidVolume5,					// 申买量五
+                pDepthMarketData->BidPrice5,					// 申买价五
+                pDepthMarketData->AskVolume2,					// 申卖量二
+                pDepthMarketData->AskPrice2,					// 申卖价二
+                pDepthMarketData->AskVolume3,					// 申卖量三
+                pDepthMarketData->AskPrice3,					// 申卖价三
+                pDepthMarketData->AskVolume4,					// 申卖量四
+                pDepthMarketData->AskPrice4,					// 申卖价四
+                pDepthMarketData->AskVolume5,					// 申卖量五
+                pDepthMarketData->AskPrice5						// 申卖价五
+                );
+            std::string uuid = publish(mystr);
+
         }
         printf("\n");
         printf("ErrorCode=[%d], ErrorMsg=[%s]\n", pRspInfo->ErrorID, pRspInfo->ErrorMsg);
